@@ -1,0 +1,45 @@
+# ==========================================
+# BACKEND
+# ==========================================
+# Ignorar dependências do Node
+backend/node_modules/
+
+# Ignorar variáveis de ambiente (contém senhas do banco e chaves JWT)
+backend/.env
+
+# Ignorar logs de erro do npm
+backend/*.log
+backend/npm-debug.log*
+
+
+# ==========================================
+# FRONTEND (React + Vite)
+# ==========================================
+# Ignorar dependências do React
+frontend/node_modules/
+
+# Ignorar a pasta de build final (produção)
+frontend/dist/
+frontend/build/
+
+# Ignorar logs de erro do frontend
+frontend/*.log
+
+# Ignorar variáveis de ambiente locais do Vite (se usar no futuro)
+frontend/.env.local
+frontend/.env.*.local
+
+
+# ==========================================
+# SISTEMA OPERACIONAL E IDEs
+# ==========================================
+# Ignorar arquivos do Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Ignorar arquivos do Mac
+.DS_Store
+
+# Ignorar configurações locais do próprio VSCode (opcional)
+.vscode/
