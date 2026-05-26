@@ -50,13 +50,7 @@ export default function ColetaForm() {
     const [lote, setLote] = useState('');
     const [ufcEncontrado, setUfcEncontrado] = useState(0);
     const [observacoes, setObservacoes] = useState('');
-    const [farmaceuticaResponsavel, setFarmaceuticaResponsavel] = useState(''); // Novo Estado: Farmacêutica Responsável pela Análise posterior
     
-    // Lista simulada de farmacêuticas cadastradas no sistema (depois puxaremos do banco)
-    const listaFarmaceuticas = [
-        { id: 'farm1', nome: 'Dra. Amanda Silva' },
-        { id: 'farm2', nome: 'Dra. Carolina Souza' }
-    ];
 
     const [dataHoraAtual, setDataHoraAtual] = useState(new Date());
     const [mensagem, setMensagem] = useState({ tipo: '', texto: '' });
@@ -75,7 +69,6 @@ export default function ColetaForm() {
         setLote('');
         setUfcEncontrado(0);
         setObservacoes('');
-        setFarmaceuticaResponsavel('');
         setMensagem({ tipo: '', texto: '' });
     };
 
@@ -92,7 +85,6 @@ export default function ColetaForm() {
             dataHoraRegistro: dataHoraAtual,
             ufcEncontrado: Number(ufcEncontrado),
             status: 'Pendente Análise', 
-            farmaceuticaResponsavel, 
             observacoes,
             ...(ehColetaAmbiental 
                 ? { sala: salaSelecionada, area: areaSelecionada } 
@@ -230,22 +222,6 @@ export default function ColetaForm() {
                                 onChange={(e) => setUfcEncontrado(e.target.value)}
                                 required
                             />
-                        </div>
-
-                        {/* NOVO CAMPO: Direcionamento para a validação da Farmacêutica */}
-                        <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-1.5">Farmacêutica de Plantão </label>
-                            <select
-                                className="w-full p-3 bg-white border border-slate-300 rounded-lg font-semibold text-slate-700 focus:ring-2 focus:ring-emerald-500 outline-none"
-                                value={farmaceuticaResponsavel}
-                                onChange={(e) => setFarmaceuticaResponsavel(e.target.value)}
-                                required
-                            >
-                                <option value="">Defina a avaliadora...</option>
-                                {listaFarmaceuticas.map(f => (
-                                    <option key={f.id} value={f.nome}>{f.nome}</option>
-                                ))}
-                            </select>
                         </div>
                     </div>
 
