@@ -1,46 +1,32 @@
-// backend/models/Laudo.js
+// backend/src/models/Laudo.js
 const mongoose = require('mongoose');
 
 const LaudoSchema = new mongoose.Schema({
-    // Vincula a coleta diretamente ao usuário do sistema que a realizou
-    responsavel: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Usuario',
-        required: true
-    },
-    dataColeta: {
-        type: Date,
-        default: Date.now,
-        required: true
-    },
-    // Ex: Sala de Sólidos, Sala de Pesagem, Controle de Qualidade
-    ambiente: {
-        type: String,
-        required: true
-    },
-    // Ex: Ar (Placa de sedimentação), Superfície (Swab), Mãos do operador
-    tipoAmostragem: {
-        type: String,
-        required: true
-    },
-    // Resultado quantitativo para gerar os gráficos de tendência
-    ufcEncontrado: {
-        type: Number, // Unidades Formadoras de Colônia
-        required: true,
-        default: 0
-    },
-    // Microorganismo identificado (se houver)
-    microorganismo: {
-        type: String,
-        default: 'Nenhum detectado'
-    },
-    // Conclusão do laudo
-    status: {
-        type: String,
-        enum: ['Conforme', 'Alerta', 'Inconforme'],
-        required: true
-    },
-    observacoes: String
-}, { timestamps: true }); // Cria campos 'createdAt' e 'updatedAt' automaticamente
+    // Dados Gerais (Comum a ambos)
+    tipoColeta: { type: String, required: true }, // Sedimentação, Toque de Luvas, Uniforme, etc.
+    dataColeta: { type: Date, required: true },
+    turno: { type: String, required: true },
+    responsavelColeta: { type: String, required: true },
+    status: { type: String, enum: ['Pendente Análise', 'Conforme', 'Inconforme'], default: 'Pendente Análise' },
+
+    // Universo A: Monitoramento Ambiental (Salas/Pontos)
+    pontoId: { type: String, default: null }, // ex: lavacao_pia, fluxo_direito
+    loteOperacional: { type: String, default: '' }, // Lote único usado no ambiental
+    
+    // Universo B: Monitoramento de Pessoal (Colaboradores)
+    colaboradorId: { type: String, default: null }, // ex: Colaborador 01, ou o nome digitado
+    loteBact: { type: String, default: '' }, // Lote específico para Meio de Bactérias
+    loteFung: { type: String, default: '' }, // Lote específico para Meio de Fungos
+    
+    // Observações Gerais de Campo
+    observacoesCampo: { type: String, default: '' },
+
+    // Dados de Liberação (Farmacêutica)
+    numeroLaudo: { type: String, default: '' },
+    ufcBactérias: { type: Number, default: null },
+    ufcFungos: { type: Number, default: null },
+    responsavelLeitura: { type: String, default: '' },
+    dataAnalise: { type: Date, default: null }
+}, { timestamps: true });
 
 module.exports = mongoose.model('Laudo', LaudoSchema);
