@@ -41,7 +41,7 @@ export default function Login() {
                         🔬
                     </div>
                     <h2 className="mt-4 text-center text-2xl font-extrabold text-gray-900 sm:text-3xl">
-                        Atlas Pharma S.A.
+                        BioCount
                     </h2>
                     <p className="mt-2 text-center text-sm text-gray-500">
                         Sistema de Monitoramento Ambiental
