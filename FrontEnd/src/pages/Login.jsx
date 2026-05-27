@@ -2,10 +2,9 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
-export default function Login() {
+export default function Login({ setUsuarioLogado }) {
     const { login } = useContext(AuthContext);
     
-    // Estados locais para capturar os dados do formulário
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [erro, setErro] = useState('');
@@ -16,52 +15,60 @@ export default function Login() {
         setErro('');
         setCarregando(true);
 
-        // Chame a função de login do nosso Contexto (que bate na porta 3000)
         const resultado = await login(email, password);
 
         if (!resultado.success) {
             setErro(resultado.message);
             setCarregando(false);
         } else {
-            // Se der certo, o Contexto muda o estado e o app redireciona
             console.log("Logado com sucesso!");
+            setUsuarioLogado({
+                nome: resultado.user?.nome || 'Dra. Farmacêutica Responsável',
+                role: resultado.user?.role || 'farmaceutica'
+            });
         }
     };
 
     return (
-        // Container principal: Centraliza tudo na tela e muda o fundo
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[#0d1117] text-slate-100 font-mono flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8">
             
-            {/* Caixa do Formulário: Alarga no Desktop (max-w-md) e fica cheia no celular */}
-            <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg border border-gray-100">
+            {/* CONTAINER PRINCIPAL: Moldura Industrial igual ao "Gerenciamento de Colaboradores" */}
+            <div className="max-w-xl w-full border border-slate-800 bg-[#161b22]/40 p-8 rounded-lg space-y-6 shadow-2xl backdrop-blur-sm">
                 
-                {/* Cabeçalho / Identidade Visual */}
-                <div className="text-center">
-                    <div className="mx-auto h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-2xl font-bold">
-                        🔬
-                    </div>
-                    <h2 className="mt-4 text-center text-2xl font-extrabold text-gray-900 sm:text-3xl">
-                        BioCount
-                    </h2>
-                    <p className="mt-2 text-center text-sm text-gray-500">
+                {/* CABEÇALHO DO TEMPLATE */}
+                <div className="text-center space-y-1 border-b border-slate-800 pb-4">
+                    <p className="text-[9px] font-black tracking-widest text-emerald-500 uppercase">
+                        ATLAS PHARMA S.A. - MES SYSTEM
+                    </p>
+                    <h1 className="text-xl font-black tracking-wider text-slate-200 uppercase">
                         Sistema de Monitoramento Ambiental
+                    </h1>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider">
+                        Operação Estéril · Controle Interno · Autenticação
                     </p>
                 </div>
 
-                {/* Formulário */}
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                {/* SUB-INDICAÇÃO DE SEÇÃO */}
+                <div className="pt-2">
+                    <h2 className="text-xs font-black text-emerald-500 uppercase tracking-widest flex items-center gap-2">
+                        <span>🔒</span> GERENCIAMENTO DE ACESSO
+                    </h2>
+                </div>
+
+                {/* FORMULÁRIO */}
+                <form className="space-y-5" onSubmit={handleSubmit}>
                     
-                    {/* Alerta de Erro vindo do Backend (se houver) */}
+                    {/* Alerta de Erro Industrial */}
                     {erro && (
-                        <div className="p-3 rounded-md bg-red-50 text-sm text-red-600 border border-red-200">
-                            ⚠️ {erro}
+                        <div className="p-3 bg-rose-950/40 border border-rose-900/60 text-rose-400 rounded text-[11px] font-bold uppercase tracking-wide">
+                            ⚠️ ERRO: {erro}
                         </div>
                     )}
 
-                    <div className="rounded-md space-y-4">
+                    <div className="space-y-4">
                         {/* Campo E-mail */}
-                        <div>
-                            <label htmlFor="email-address" className="block text-sm font-medium text-gray-700 mb-1">
+                        <div className="space-y-1">
+                            <label htmlFor="email-address" className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                 E-mail Institucional
                             </label>
                             <input
@@ -72,14 +79,15 @@ export default function Login() {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="appearance-none rounded-lg relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
-                                placeholder="exemplo@farmacia.com"
+                                className="w-full bg-[#0d1117] border border-slate-700 rounded px-3 py-2 text-xs text-slate-300 outline-none focus:border-emerald-500 transition-colors font-mono"
+                                placeholder="usuario@atlaspharma.com"
+                                disabled={carregando}
                             />
                         </div>
 
                         {/* Campo Senha */}
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                        <div className="space-y-1">
+                            <label htmlFor="password" className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                 Senha de Acesso
                             </label>
                             <input
@@ -90,24 +98,32 @@ export default function Login() {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="appearance-none rounded-lg relative block w-full px-3 py-2.5 border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
-                                placeholder="••••••••"
+                                className="w-full bg-[#0d1117] border border-slate-700 rounded px-3 py-2 text-xs text-slate-300 outline-none focus:border-emerald-500 transition-colors font-mono"
+                                placeholder="••••••••••••"
+                                disabled={carregando}
                             />
                         </div>
                     </div>
 
-                    {/* Botão de Enviar (Aumenta a área de clique no mobile para facilitar o toque) */}
-                    <div>
+                    {/* Botões de Ação (Mesmo verde esmeralda arredondado do botão "Adicionar") */}
+                    <div className="pt-2">
                         <button
                             type="submit"
                             disabled={carregando}
-                            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors disabled:opacity-50"
+                            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs px-5 py-2.5 rounded tracking-widest uppercase transition-all shadow-md shadow-emerald-950/50 disabled:opacity-40"
                         >
-                            {carregando ? 'Validando credenciais...' : 'Entrar no Sistema'}
+                            {carregando ? 'PROCESSANDO CREDENCIAIS...' : 'INICIAR SESSÃO'}
                         </button>
                     </div>
                 </form>
+
+                {/* RODAPÉ INTERNO DO CARTÃO */}
+                <div className="border-t border-slate-800 pt-4 flex justify-between items-center text-[9px] text-slate-600 uppercase tracking-widest">
+                    <span>BioCount MES v2.4.0</span>
+                    <span>Logs de Auditoria Ativos</span>
+                </div>
+
             </div>
         </div>
     );
-};
+}
