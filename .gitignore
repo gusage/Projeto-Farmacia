@@ -26,8 +26,8 @@ frontend/build/
 frontend/*.log
 
 # Ignorar variáveis de ambiente locais do Vite (se usar no futuro)
-frontend/.env.local
-frontend/.env.*.local
+frontend/.env
+frontend/.env.production
 
 
 # ==========================================
