@@ -21,7 +21,7 @@ export default function Navbar() {
     <nav className="bg-[#161b22] border-b border-slate-800 font-mono select-none">
 
       {/* TOPO: Identificação Corporativa */}
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+      <div className="max-w-400 mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded bg-emerald-950/50 border border-emerald-800 flex items-center justify-center text-emerald-400 font-black">
             🔬
@@ -57,7 +57,7 @@ export default function Navbar() {
 
       {/* BASE: Menu de Navegação */}
       <div className="border-t border-slate-800/60 bg-[#12161f]">
-        <div className="max-w-[1600px] mx-auto flex flex-wrap gap-1 px-4">
+        <div className="max-w-400px mx-auto flex flex-wrap gap-1 px-4">
           {NAV_LINKS.map(({ to, label }) => (
             <MenuLink
               key={to}
@@ -77,7 +77,7 @@ function MenuLink({ to, label, active }) {
   return (
     <Link
       to={to}
-      className={`px-4 py-3 text-xs font-bold tracking-wide uppercase transition-all border-b-2 relative -mb-[2px] ${
+      className={`px-4 py-3 text-xs font-bold tracking-wide uppercase transition-all border-b-2 relative -mb-0.5 ${
         active
           ? 'bg-[#161b22] text-emerald-400 border-emerald-500 font-black'
           : 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-slate-800/20'
