@@ -1,6 +1,6 @@
 // backend/src/routes/laudoRoutes.js
 const router      = require('express').Router();
-const Laudo       = require('../models/Laudo');
+const Laudo       = require('../models/laudo');
 const autenticar = require('../middleware/authMiddleware');
 const checkRole  = require('../middleware/roleMiddleware');
 

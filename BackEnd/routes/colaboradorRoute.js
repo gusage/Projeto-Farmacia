@@ -1,6 +1,6 @@
 // backend/src/routes/colaboradorRoutes.js
 const router      = require('express').Router();
-const Colaborador = require('../models/Colaborador');
+const Colaborador = require('../models/colaborador');
 const autenticar = require('../middleware/authMiddleware');
 const checkRole  = require('../middleware/roleMiddleware');
 
