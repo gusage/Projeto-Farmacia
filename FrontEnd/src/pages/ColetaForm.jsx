@@ -2,43 +2,12 @@
 import { useState } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-
-// ── DADOS ESTÁTICOS ────────────────────────────────────────────────────────────
-
-const TIPOS_COLETA = [
-  'Sedimentação - Bactérias',
-  'Sedimentação - Fungos',
-  'Contato - Bactérias',
-  'Contato - Fungos',
-  'Toque de Luvas',
-  'Mãos sem Luva',
-  'Uniforme Estéril',
-];
-
-const TIPOS_PESSOAL = ['Toque de Luvas', 'Mãos sem Luva', 'Uniforme Estéril'];
-
-const PONTOS_AMBIENTAIS = [
-  {
-    grupo: 'Lavação',
-    cor: 'border-purple-500 text-purple-400',
-    pontos: [
-      { id: 'lavacao_pia',     grau: 'Grau D', titulo: 'Bancada sala est. material limpo (PIA)',           limite: '< 50 UFC/PL', badge: 'bg-purple-950 text-purple-400 border-purple-800' },
-      { id: 'lavacao_central', grau: 'Grau D', titulo: 'Bancada sala est. material limpo (BANCADA CENTRAL)', limite: '< 50 UFC/PL', badge: 'bg-purple-950 text-purple-400 border-purple-800' },
-    ],
-  },
-  {
-    grupo: 'Sala 1 — Geral',
-    cor: 'border-amber-500 text-amber-500',
-    pontos: [
-      { id: 'geral_direito',   grau: 'Grau B', titulo: 'Bancada de manipulação geral · Lado Direito',   limite: '< 25 UFC/PL',       badge: 'bg-amber-950/60 text-amber-400 border-amber-900/60' },
-      { id: 'geral_esquerdo',  grau: 'Grau B', titulo: 'Bancada de manipulação geral · Lado Esquerdo',  limite: '< 25 UFC/PL',       badge: 'bg-amber-950/60 text-amber-400 border-amber-900/60' },
-      { id: 'fluxo_direito',   grau: 'Grau A', titulo: 'Bancada fluxo laminar · Lado Direito',          limite: '0 UFC/PL (Grau A)', badge: 'bg-teal-950 text-teal-400 border-teal-800' },
-      { id: 'fluxo_meio',      grau: 'Grau A', titulo: 'Bancada fluxo laminar · Meio',                  limite: '0 UFC/PL (Grau A)', badge: 'bg-teal-950 text-teal-400 border-teal-800' },
-      { id: 'fluxo_esquerdo',  grau: 'Grau A', titulo: 'Bancada fluxo laminar · Lado Esquerdo',         limite: '0 UFC/PL (Grau A)', badge: 'bg-teal-950 text-teal-400 border-teal-800' },
-      { id: 'geral_pulo',      grau: 'Grau C', titulo: 'Antecâmara entrada (BANCO DE PULO)',             limite: '< 25 UFC/PL',       badge: 'bg-orange-950 text-orange-400 border-orange-800' },
-    ],
-  },
-];
+import {
+  TIPOS_COLETA,
+  TIPOS_PESSOAL,
+  PONTOS_AMBIENTAIS,
+  calcularPrazo
+} from '../utils/laudoHelpers';
 
 const TOTAL_COLABORADORES = 13;
 
@@ -55,13 +24,6 @@ function inicializarColaboradores() {
     const id = `colaborador_${String(i + 1).padStart(2, '0')}`;
     return [id, { nomeCustom: '', loteBact: '', loteFung: '', obs: '' }];
   }).reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
-}
-
-function calcularPrazo(dataStr) {
-  if (!dataStr) return '—';
-  const d = new Date(dataStr);
-  d.setDate(d.getDate() + 5);
-  return d.toLocaleDateString('pt-BR');
 }
 
 // ── COMPONENTES INTERNOS ────────────────────────────────────────────────────────

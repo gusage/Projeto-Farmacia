@@ -9,6 +9,7 @@ import AnaliseLaudos from './pages/AnaliseLaudos';
 import ConsultaAnalise from './pages/ConsultaAnalise';
 import AnaliseTendencia from './pages/AnaliseTendencia';
 import GerenciarColaboradores from './pages/GerenciarColaboradores';
+import CadastroUsuario from './pages/CadastroUsuario';
 
 // Protege rotas — redireciona pro login se não autenticado
 function RotaProtegida({ children }) {
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/consulta" element={<ConsultaAnalise />} />
           <Route path="/tendencia" element={<AnaliseTendencia />} />
           <Route path="/colaboradores" element={<GerenciarColaboradores />} />
+          <Route path="/cadastro" element={<CadastroUsuario />} />
         </Route>
 
         {/* Qualquer rota desconhecida volta pro início */}

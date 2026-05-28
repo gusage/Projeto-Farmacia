@@ -21,7 +21,7 @@ const UsuarioSchema = new mongoose.Schema({
   role: {
     type:     String,
     required: true,
-    enum:     ['admin', 'farmaceutica', 'tecnica'],
+    enum:     ['farmaceutica', 'tecnica'],
     default:  'tecnica',
   },
 }, { timestamps: true });

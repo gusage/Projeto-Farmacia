@@ -34,6 +34,7 @@ export const GRAU_PONTO = {
 
 // ── NOME AMIGÁVEL DOS PONTOS ───────────────────────────────────────────────────
 export const NOME_PONTO = {
+  // Sala 1 - Geral
   lavacao_pia:     'Bancada sala est. material limpo (PIA)',
   lavacao_central: 'Bancada sala est. material limpo (BANCADA CENTRAL)',
   geral_direito:   'Bancada de manipulação geral · Lado Direito',
@@ -42,6 +43,18 @@ export const NOME_PONTO = {
   fluxo_meio:      'Bancada fluxo laminar · Meio',
   fluxo_esquerdo:  'Bancada fluxo laminar · Lado Esquerdo',
   geral_pulo:      'Antecâmara entrada (BANCO DE PULO)',
+  //Sala 2 - Antibióticos
+  antibio_bancada_direito:  'Bancada de manipulação antibióticos · Lado Direito',
+  antibio_bancada_esquerdo: 'Bancada de manipulação antibióticos · Lado Esquerdo',
+  antibio_fluxo_direito:    'Bancada fluxo laminar antibióticos · Lado Direito (Frente)',
+  antibio_fluxo_esquerdo:   'Bancada fluxo laminar antibióticos · Lado Esquerdo (Atrás)',
+  antibio_pulo:             'Antecâmara entrada antibióticos (BANCO DE PULO)',
+  // Sala 3 - Hormônios
+   hormonio_bancada_direito:  'Bancada manipulação hormônios · Lado Direito',
+  hormonio_bancada_esquerdo: 'Bancada manipulação hormônios · Lado Esquerdo',
+  hormonio_fluxo_direito:    'Bancada fluxo laminar hormônios · Lado Direito',
+  hormonio_fluxo_esquerdo:   'Bancada fluxo laminar hormônios · Lado Esquerdo',
+  hormonio_pulo:             'Antecâmara entrada hormônios (BANCO DE PULO)',
 };
 
 // ── PONTOS AMBIENTAIS COMPLETOS (usado no ColetaForm) ─────────────────────────
@@ -64,6 +77,28 @@ export const PONTOS_AMBIENTAIS = [
       { id: 'fluxo_meio',     grau: 'Grau A', titulo: 'Bancada fluxo laminar · Meio',                 limite: '0 UFC/PL (Grau A)', badge: 'bg-teal-950 text-teal-400 border-teal-800'           },
       { id: 'fluxo_esquerdo', grau: 'Grau A', titulo: 'Bancada fluxo laminar · Lado Esquerdo',        limite: '0 UFC/PL (Grau A)', badge: 'bg-teal-950 text-teal-400 border-teal-800'           },
       { id: 'geral_pulo',     grau: 'Grau C', titulo: 'Antecâmara entrada (BANCO DE PULO)',            limite: '< 25 UFC/PL',       badge: 'bg-orange-950 text-orange-400 border-orange-800'    },
+    ],
+  },
+  {
+    grupo: 'Sala 2 — Antibióticos',
+    cor: 'border-rose-500 text-rose-400',
+    pontos: [
+      { id: 'antibio_bancada_direito',  grau: 'Grau B', titulo: 'Bancada de manipulação antibióticos · Lado Direito',       limite: '< 25 UFC/PL',       badge: 'bg-amber-950/60 text-amber-400 border-amber-900/60' },
+      { id: 'antibio_bancada_esquerdo', grau: 'Grau B', titulo: 'Bancada de manipulação antibióticos · Lado Esquerdo',      limite: '< 25 UFC/PL',       badge: 'bg-amber-950/60 text-amber-400 border-amber-900/60' },
+      { id: 'antibio_fluxo_direito',    grau: 'Grau A', titulo: 'Bancada fluxo laminar antibióticos · Lado Direito (Frente)', limite: '0 UFC/PL (Grau A)', badge: 'bg-teal-950 text-teal-400 border-teal-800'           },
+      { id: 'antibio_fluxo_esquerdo',   grau: 'Grau A', titulo: 'Bancada fluxo laminar antibióticos · Lado Esquerdo (Atrás)', limite: '0 UFC/PL (Grau A)', badge: 'bg-teal-950 text-teal-400 border-teal-800'           },
+      { id: 'antibio_pulo',             grau: 'Grau C', titulo: 'Antecâmara entrada antibióticos (BANCO DE PULO)',           limite: '< 25 UFC/PL',       badge: 'bg-orange-950 text-orange-400 border-orange-800'    },
+    ],
+  },
+  {
+    grupo: 'Sala 3 — Hormônios',
+    cor: 'border-violet-500 text-violet-400',
+    pontos: [
+      { id: 'hormonio_bancada_direito',  grau: 'Grau B', titulo: 'Bancada manipulação hormônios · Lado Direito',  limite: '< 25 UFC/PL',       badge: 'bg-amber-950/60 text-amber-400 border-amber-900/60' },
+      { id: 'hormonio_bancada_esquerdo', grau: 'Grau B', titulo: 'Bancada manipulação hormônios · Lado Esquerdo', limite: '< 25 UFC/PL',       badge: 'bg-amber-950/60 text-amber-400 border-amber-900/60' },
+      { id: 'hormonio_fluxo_direito',    grau: 'Grau A', titulo: 'Bancada fluxo laminar hormônios · Lado Direito', limite: '0 UFC/PL (Grau A)', badge: 'bg-teal-950 text-teal-400 border-teal-800'           },
+      { id: 'hormonio_fluxo_esquerdo',   grau: 'Grau A', titulo: 'Bancada fluxo laminar hormônios · Lado Esquerdo', limite: '0 UFC/PL (Grau A)', badge: 'bg-teal-950 text-teal-400 border-teal-800'           },
+      { id: 'hormonio_pulo',             grau: 'Grau C', titulo: 'Antecâmara entrada hormônios (BANCO DE PULO)',   limite: '< 25 UFC/PL',       badge: 'bg-orange-950 text-orange-400 border-orange-800'    },
     ],
   },
 ];

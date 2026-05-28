@@ -7,8 +7,9 @@ const NAV_LINKS = [
   { to: '/coleta',        label: '📝 Registrar Coleta'   },
   { to: '/analise',       label: '⏳ Aguardando Laudo'   },
   { to: '/consulta',      label: '🔍 Consulta & Análise' },
-  { to: '/relatorios',    label: '📊 Relatórios'        },
+  { to: '/tendencia',     label: '📊 Tendência'          },
   { to: '/colaboradores', label: '👥 Colaboradores'      },
+  { to: '/cadastro',      label: '👤 Cadastro de Usuário' },
 ];
 
 const dataHoje = new Date().toLocaleDateString('pt-BR'); // fora do componente — calcula só uma vez
@@ -28,7 +29,7 @@ export default function Navbar() {
           </div>
           <div>
             <span className="text-[9px] font-black tracking-widest text-emerald-500 block uppercase">
-              ATLAS PHARMA S.A. · MES SYSTEM
+              MES SYSTEM
             </span>
             <span className="text-sm font-black tracking-wider text-slate-200 uppercase">
               BioCount

@@ -1,15 +1,7 @@
 // src/pages/PainelAlertas.jsx
 import { useState, useEffect } from 'react';
 import api from '../services/api';
-
-// Calcula dias restantes a partir de uma data de prazo
-function calcularDiasRestantes(dataPrazo) {
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-  const prazo = new Date(dataPrazo);
-  prazo.setHours(0, 0, 0, 0);
-  return Math.ceil((prazo - hoje) / (1000 * 60 * 60 * 24));
-}
+import { calcularDiasRestantes } from '../utils/laudoHelpers';
 
 function classificarLaudo(dias) {
   if (dias < 0)  return 'vencido';

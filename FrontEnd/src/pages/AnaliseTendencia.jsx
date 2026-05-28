@@ -1,17 +1,7 @@
 // src/pages/AnaliseTendencia.jsx
 import { useState, useEffect } from 'react';
 import api from '../services/api';
-
-// Idealmente importado de src/utils/laudoHelpers.js
-const TIPOS_COLETA = [
-  'Sedimentação - Bactérias',
-  'Sedimentação - Fungos',
-  'Contato - Bactérias',
-  'Contato - Fungos',
-  'Toque de Luvas',
-  'Mãos sem Luva',
-  'Uniforme Estéril',
-];
+import { TIPOS_COLETA } from '../utils/laudoHelpers';
 
 const dataAtualizacao = new Date().toLocaleDateString('pt-BR'); // calculado uma vez
 

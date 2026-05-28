@@ -1,64 +1,12 @@
 // src/pages/ConsultaAnalise.jsx
 import { useState, useEffect } from 'react';
 import api from '../services/api';
-
-// ── CONSTANTES ──────────────────────────────────────────────────────────────────
-
-const TIPOS_COLETA = [
-  'Sedimentação - Bactérias',
-  'Sedimentação - Fungos',
-  'Contato - Bactérias',
-  'Contato - Fungos',
-  'Toque de Luvas',
-  'Mãos sem Luva',
-  'Uniforme Estéril',
-];
-
-// Idealmente move pra src/utils/laudoHelpers.js e importa aqui e no ColetaForm
-const BADGE_TIPO = {
-  'Sedimentação - Bactérias': { texto: 'Sedim. Bact.',  estilo: 'bg-blue-950 text-blue-400 border-blue-900/60'       },
-  'Sedimentação - Fungos':    { texto: 'Sedim. Fung.',  estilo: 'bg-indigo-950 text-indigo-400 border-indigo-900/60' },
-  'Contato - Bactérias':      { texto: 'Contat. Bact.', estilo: 'bg-cyan-950 text-cyan-400 border-cyan-900/60'       },
-  'Contato - Fungos':         { texto: 'Contat. Fung.', estilo: 'bg-teal-950 text-teal-400 border-teal-900/60'       },
-  'Toque de Luvas':           { texto: 'Luvas',         estilo: 'bg-purple-950 text-purple-400 border-purple-900/60' },
-  'Mãos sem Luva':            { texto: 'Mãos s/ Luv.',  estilo: 'bg-amber-950 text-amber-400 border-amber-900/60'   },
-  'Uniforme Estéril':         { texto: 'Uniforme',      estilo: 'bg-emerald-950 text-emerald-400 border-emerald-900/60' },
-};
-
-const GRAU_PONTO = {
-  fluxo:   { texto: 'Grau A', classe: 'bg-teal-950 text-teal-400 border-teal-800'              },
-  geral:   { texto: 'Grau B', classe: 'bg-amber-950/60 text-amber-400 border-amber-900/60'     },
-  pulo:    { texto: 'Grau C', classe: 'bg-orange-950 text-orange-400 border-orange-800'        },
-  lavacao: { texto: 'Grau D', classe: 'bg-purple-950 text-purple-400 border-purple-800'        },
-};
-
-const NOME_PONTO = {
-  lavacao_pia:     'Bancada sala est. material limpo (PIA)',
-  lavacao_central: 'Bancada sala est. material limpo (BANCADA CENTRAL)',
-  geral_direito:   'Bancada de manipulação geral · Lado Direito',
-  geral_esquerdo:  'Bancada de manipulação geral · Lado Esquerdo',
-  fluxo_direito:   'Bancada fluxo laminar · Lado Direito',
-  fluxo_meio:      'Bancada fluxo laminar · Meio',
-  fluxo_esquerdo:  'Bancada fluxo laminar · Lado Esquerdo',
-  geral_pulo:      'Antecâmara entrada (BANCO DE PULO)',
-};
-
-// ── HELPERS ──────────────────────────────────────────────────────────────────────
-
-function obterBadgeTipo(tipo) {
-  return BADGE_TIPO[tipo] || { texto: tipo, estilo: 'bg-slate-800 text-slate-400 border-slate-700' };
-}
-
-function obterGrau(pontoId) {
-  if (!pontoId) return null;
-  const chave = Object.keys(GRAU_PONTO).find(k => pontoId.includes(k));
-  return chave ? GRAU_PONTO[chave] : null;
-}
-
-function obterNomePonto(laudo) {
-  if (laudo.colaboradorId) return `${laudo.tipoColeta} | ${laudo.colaboradorId}`;
-  return NOME_PONTO[laudo.pontoId] || laudo.pontoId || '—';
-}
+import {
+  TIPOS_COLETA,
+  obterBadgeTipo,
+  obterGrau,
+  obterNomePonto
+} from '../utils/laudoHelpers';
 
 // ── PÁGINA ───────────────────────────────────────────────────────────────────────
 

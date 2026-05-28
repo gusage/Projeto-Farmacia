@@ -2,15 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-
-function calcularDiasRestantes(dataPrazo) {
-  if (!dataPrazo) return null;
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-  const prazo = new Date(dataPrazo);
-  prazo.setHours(0, 0, 0, 0);
-  return Math.ceil((prazo - hoje) / (1000 * 60 * 60 * 24));
-}
+import { calcularDiasRestantes } from '../utils/laudoHelpers';
 
 function BadgePrazo({ dias }) {
   if (dias === null) return null;
