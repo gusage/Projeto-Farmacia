@@ -4,9 +4,16 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Usuario = require('../models/Usuario'); // Importa o modelo que criamos no Passo 1
+const autenticar = require('../middleware/authMiddleware');
+const checkRole  = require('../middleware/roleMiddleware');
 
 // 1. ROTA DE CADASTRO (REGISTRAR NOVAS FARMACÊUTICAS/TÉCNICAS)
-router.post('/registrar', async (req, res) => {
+router.post('/registrar', autenticar, async (req, res) => {
+  // opcional: checar se quem está cadastrando tem role 'farmaceutica'
+  if (req.usuario.role !== 'farmaceutica') {
+    return res.status(403).json({ message: 'Apenas farmacêuticos podem cadastrar usuários.' });
+  }
+
     const { nome, email, senha, role } = req.body;
 
     try {

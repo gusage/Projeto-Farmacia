@@ -6,6 +6,7 @@ backend/node_modules/
 
 # Ignorar variáveis de ambiente (contém senhas do banco e chaves JWT)
 backend/.env
+backend/.env.production
 
 # Ignorar logs de erro do npm
 backend/*.log

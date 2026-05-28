@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { to: '/coleta',        label: '📝 Registrar Coleta'   },
   { to: '/analise',       label: '⏳ Aguardando Laudo'   },
   { to: '/consulta',      label: '🔍 Consulta & Análise' },
+  { to: '/relatorios',    label: '📊 Relatórios'        },
   { to: '/colaboradores', label: '👥 Colaboradores'      },
 ];
 

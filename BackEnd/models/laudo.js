@@ -3,16 +3,19 @@ const mongoose = require('mongoose');
 
 const LaudoSchema = new mongoose.Schema({
 
-  // ── DADOS GERAIS ──────────────────────────────────────────
   tipoColeta: {
-    type: String,
-    required: true,
-    enum: ['Sedimentação', 'Toque de Luvas', 'Uniforme', 'Ambiental', 'Pessoal'],
-  },
-  dataColeta:          { type: Date,   required: true },
-  dataPrazo:           { type: Date,   required: true }, // 🆕 necessário pro painel de alertas
-  turno:               { type: String, required: true },
-  responsavelColeta:   { type: String, required: true },
+  type: String,
+  required: true,
+  enum: [
+    'Sedimentação - Bactérias',
+    'Sedimentação - Fungos',
+    'Contato - Bactérias',
+    'Contato - Fungos',
+    'Toque de Luvas',
+    'Mãos sem Luva',
+    'Uniforme Estéril',
+  ],
+},
 
   status: {
     type: String,
@@ -20,28 +23,33 @@ const LaudoSchema = new mongoose.Schema({
     default: 'Pendente Análise',
   },
 
-  // ── UNIVERSO A: AMBIENTAL (Salas/Pontos) ──────────────────
-  pontoId:          { type: String, default: null },
-  loteOperacional:  { type: String, default: '' },
+  pontoId:         { type: String, default: null },
+  loteOperacional: { type: String, default: '' },
 
-  // ── UNIVERSO B: PESSOAL (Colaboradores) ───────────────────
-  colaboradorId:  { type: String, default: null },
-  loteBact:       { type: String, default: '' },
-  loteFung:       { type: String, default: '' },
+  colaboradorId: { type: String, default: null },
+  loteBact:      { type: String, default: '' },
+  loteFung:      { type: String, default: '' },
 
-  // ── CAMPO ─────────────────────────────────────────────────
   observacoesCampo: { type: String, default: '' },
 
-  // ── LIBERAÇÃO (Farmacêutica) ───────────────────────────────
-  numeroLaudo:          { type: String,  default: '' },
-  ufcBacterias:         { type: Number,  default: null }, // 🔧 removido acento — evita bug em queries
-  ufcFungos:            { type: Number,  default: null },
-  responsavelLeitura:   { type: String,  default: '' },
-  dataAnalise:          { type: Date,    default: null },
+  numeroLaudo:        { type: String, default: '' },
+  ufcBacterias:       { type: Number, default: null },
+  ufcFungos:          { type: Number, default: null },
+  responsavelLeitura: { type: String, default: '' },
+  dataAnalise:        { type: Date,   default: null },
 
 }, { timestamps: true });
 
-// ── ÍNDICES para queries frequentes ───────────────────────────
+// Calcula dataPrazo automaticamente: 5 dias após dataColeta
+LaudoSchema.pre('save', function (next) {
+  if (this.isNew || this.isModified('dataColeta')) {
+    const prazo = new Date(this.dataColeta);
+    prazo.setDate(prazo.getDate() + 5);
+    this.dataPrazo = prazo;
+  }
+  next();
+});
+
 LaudoSchema.index({ status: 1 });
 LaudoSchema.index({ dataPrazo: 1 });
 LaudoSchema.index({ dataColeta: -1 });

@@ -12,8 +12,8 @@ import GerenciarColaboradores from './pages/GerenciarColaboradores';
 
 // Protege rotas — redireciona pro login se não autenticado
 function RotaProtegida({ children }) {
-  const { usuario } = useAuth();
-  return usuario ? children : <Navigate to="/login" replace />;
+  const { user } = useAuth();
+  return user ? children : <Navigate to="/login" replace />;
 }
 
 export default function App() {

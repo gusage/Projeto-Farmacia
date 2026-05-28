@@ -18,6 +18,7 @@ export default function Login() {
     setCarregando(true);
 
     const resultado = await login(email, password);
+    console.log('resultado do login:', resultado);
 
     if (resultado.success) {
       navigate('/alertas'); // redireciona pelo router — sem precisar de prop

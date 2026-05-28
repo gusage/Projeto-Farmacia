@@ -2,7 +2,7 @@
 import { createContext, useContext, useState } from 'react';
 import api from '../services/api';
 
-const AuthContext = createContext(null); // null = sem valor padrão enganoso
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -58,7 +58,8 @@ export function AuthProvider({ children }) {
   );
 }
 
-// Hook próprio — importa só isso nos componentes
+// eslint-disable-next-line react-refresh/only-export-components
+export { AuthContext };
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth deve ser usado dentro de AuthProvider');
