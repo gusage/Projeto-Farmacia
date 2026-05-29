@@ -40,7 +40,7 @@ export default function Navbar() {
     <nav className="bg-[#161b22] border-b border-slate-800 font-mono select-none">
 
       {/* TOPO: Identificação Corporativa */}
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+      <div className="max-w-400 mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded bg-emerald-950/50 border border-emerald-800 flex items-center justify-center text-emerald-400 font-black">
             🔬
@@ -76,7 +76,7 @@ export default function Navbar() {
 
       {/* BASE: Menu de Navegação */}
       <div className="border-t border-slate-800/60 bg-[#12161f]">
-        <div className="max-w-[1600px] mx-auto flex flex-wrap gap-1 px-4">
+        <div className="max-w-400 mx-auto flex flex-wrap gap-1 px-4">
           {NAV_LINKS.map(({ to, label, pin }) => (
             <MenuLink
               key={to}
@@ -107,7 +107,7 @@ function MenuLink({ to, label, active, pin }) {
   return (
     <Link
       to={to}
-      className={`relative px-4 py-3 text-xs font-bold tracking-wide uppercase transition-all border-b-2 -mb-[2px] ${
+      className={`relative px-4 py-3 text-xs font-bold tracking-wide uppercase transition-all border-b-2 -mb-0.5 ${
         active
           ? 'bg-[#161b22] text-emerald-400 border-emerald-500 font-black'
           : 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-slate-800/20'
@@ -117,7 +117,7 @@ function MenuLink({ to, label, active, pin }) {
 
       {/* Pin de notificação */}
       {pin > 0 && (
-        <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[8px] font-black rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 leading-none">
+        <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[8px] font-black rounded-full min-w-4 h-4 flex items-center justify-center px-1 leading-none">
           {pin > 99 ? '99+' : pin}
         </span>
       )}
