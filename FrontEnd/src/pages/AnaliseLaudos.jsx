@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { calcularDiasRestantes } from '../utils/laudoHelpers';
+import UploadLaudo from '../components/shared/UploadLaudo';
 
 function BadgePrazo({ dias }) {
   if (dias === null) return null;
@@ -19,10 +20,10 @@ function inputClass(focusColor = 'blue') {
 
 export default function AnaliseLaudos() {
   const { user } = useAuth();
-  const [laudos,    setLaudos]    = useState([]);
+  const [laudos,     setLaudos]     = useState([]);
   const [carregando, setCarregando] = useState(true);
-  const [mensagem,  setMensagem]  = useState({ tipo: '', texto: '' });
-  const [inputs,    setInputs]    = useState({});
+  const [mensagem,   setMensagem]   = useState({ tipo: '', texto: '' });
+  const [inputs,     setInputs]     = useState({});
 
   useEffect(() => {
     async function buscarPendentes() {
@@ -30,7 +31,6 @@ export default function AnaliseLaudos() {
         const response = await api.get('/laudos/consultar?status=Pendente Análise');
         setLaudos(response.data);
 
-        // Pré-preenche responsável com usuário logado
         const init = {};
         response.data.forEach(l => {
           init[l._id] = {
@@ -39,6 +39,7 @@ export default function AnaliseLaudos() {
             ufcBact:            '',
             ufcFung:            '',
             responsavelLeitura: user?.nome || '',
+            intercorrencia:     'Nenhuma',
           };
         });
         setInputs(init);
@@ -54,17 +55,27 @@ export default function AnaliseLaudos() {
   const handleInputChange = (id, campo, valor) =>
     setInputs(prev => ({ ...prev, [id]: { ...prev[id], [campo]: valor } }));
 
+  // Atualiza um laudo específico na lista (usado pelo UploadLaudo)
+  const handleAtualizarLaudo = (laudoAtualizado) => {
+    setLaudos(prev =>
+      prev.map(l => l._id === laudoAtualizado._id ? laudoAtualizado : l)
+    );
+  };
+
   const confirmarRecebimento = async (id) => {
     const dados = inputs[id];
     setMensagem({ tipo: '', texto: '' });
 
     try {
       await api.put(`/laudos/atualizar/${id}`, {
-        status:             dados.resultadoFinal === 'Aprovado' ? 'Conforme' : 'Inconforme',
+        status:             dados.resultadoFinal === 'Aprovado' ? 'Conforme'
+                          : dados.intercorrencia === 'Recoleta Necessária' ? 'Recoleta'
+                          : 'Inconforme',
         numeroLaudo:        dados.numeroLaudo,
-        ufcBacterias:       Number(dados.ufcBact)  || null,  // sem acento, alinhado ao model
-        ufcFungos:          Number(dados.ufcFung)  || null,
+        ufcBacterias:       Number(dados.ufcBact) || null,
+        ufcFungos:          Number(dados.ufcFung) || null,
         responsavelLeitura: dados.responsavelLeitura,
+        intercorrencia:     dados.intercorrencia,
         dataAnalise:        new Date(),
       });
 
@@ -104,7 +115,6 @@ export default function AnaliseLaudos() {
         </div>
       )}
 
-      {/* Estados */}
       {carregando && (
         <div className="text-slate-500 text-xs animate-pulse">Sincronizando com Atlas...</div>
       )}
@@ -117,13 +127,13 @@ export default function AnaliseLaudos() {
 
       {/* Cards */}
       {!carregando && laudos.map((laudo) => {
-        const dias = calcularDiasRestantes(laudo.dataPrazo);
+        const dias  = calcularDiasRestantes(laudo.dataPrazo);
         const input = inputs[laudo._id] || {};
 
         return (
           <div key={laudo._id} className="bg-[#161b22] border border-slate-800 rounded-lg p-5 hover:border-slate-700 transition-colors">
 
-            {/* Topo: badges dinâmicos */}
+            {/* Topo */}
             <div className="flex justify-between items-start mb-4">
               <div className="flex flex-wrap gap-2">
                 <span className="bg-blue-900/40 text-blue-400 border border-blue-800 px-2 py-0.5 rounded text-[9px] font-bold uppercase">
@@ -160,7 +170,7 @@ export default function AnaliseLaudos() {
             </div>
 
             {/* Inputs de análise */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
 
               <div className="space-y-1">
                 <label className="text-[9px] text-slate-500 uppercase font-bold">Nº do Laudo</label>
@@ -207,23 +217,44 @@ export default function AnaliseLaudos() {
                 />
               </div>
 
+              <div className="space-y-1">
+                <label className="text-[9px] text-slate-500 uppercase font-bold">Intercorrência</label>
+                <select
+                  className={`${inputClass()} text-amber-400 font-bold`}
+                  value={input.intercorrencia || 'Nenhuma'}
+                  onChange={e => handleInputChange(laudo._id, 'intercorrencia', e.target.value)}
+                >
+                  <option value="Nenhuma">Nenhuma</option>
+                  <option value="Recoleta Necessária">Recoleta Necessária</option>
+                </select>
+              </div>
+
               <button
                 onClick={() => confirmarRecebimento(laudo._id)}
                 className="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black py-2.5 rounded shadow-lg uppercase tracking-wider transition-transform active:scale-95 flex items-center justify-center gap-2"
               >
-                <span>✅</span> Confirmar Recebimento
+                <span>✅</span> Confirmar
               </button>
             </div>
 
-            {/* Responsável pela leitura */}
-            <div className="mt-4 pt-4 border-t border-slate-800/50 flex flex-col gap-1">
-              <label className="text-[9px] text-slate-600 uppercase font-bold">Responsável pela Leitura</label>
-              <input
-                type="text"
-                placeholder="Nome / Matrícula"
-                className="w-full md:w-64 bg-transparent border-b border-slate-800 text-[10px] text-slate-400 outline-none focus:border-slate-600 pb-1"
-                value={input.responsavelLeitura || ''}
-                onChange={e => handleInputChange(laudo._id, 'responsavelLeitura', e.target.value)}
+            {/* Footer — responsável + upload */}
+            <div className="mt-4 space-y-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-[9px] text-slate-600 uppercase font-bold">Responsável pela Leitura</label>
+                <input
+                  type="text"
+                  placeholder="Nome / Matrícula"
+                  className="w-full md:w-64 bg-transparent border-b border-slate-800 text-[10px] text-slate-400 outline-none focus:border-slate-600 pb-1"
+                  value={input.responsavelLeitura || ''}
+                  onChange={e => handleInputChange(laudo._id, 'responsavelLeitura', e.target.value)}
+                />
+              </div>
+
+              {/* 🆕 Upload de arquivos */}
+              <UploadLaudo
+                laudoId={laudo._id}
+                arquivos={laudo.arquivos || []}
+                onAtualizar={handleAtualizarLaudo}
               />
             </div>
 

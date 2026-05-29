@@ -3,6 +3,7 @@ const router      = require('express').Router();
 const Laudo       = require('../models/laudo');
 const autenticar = require('../middleware/authMiddleware');
 const checkRole  = require('../middleware/roleMiddleware');
+const { cloudinary, upload } = require('../config/cloudinary');
 
 router.use(autenticar); // protege TODAS as rotas deste arquivo de uma vez
 
@@ -70,6 +71,50 @@ router.put('/atualizar/:id', autenticar, checkRole(['farmaceutica']), async (req
   } catch (error) {
     console.error('Erro ao atualizar laudo:', error);
     res.status(500).json({ message: 'Erro ao atualizar laudo.' });
+  }
+});
+
+// POST /laudos/upload/:id
+router.post('/upload/:id', upload.single('arquivo'), async (req, res) => {
+  try {
+    const laudo = await Laudo.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: {
+          arquivos: {
+            url:          req.file.path,
+            publicId:     req.file.filename,
+            nomeOriginal: req.file.originalname,
+            dataUpload:   new Date(),
+          }
+        }
+      },
+      { new: true }
+    );
+
+    if (!laudo) return res.status(404).json({ message: 'Laudo não encontrado.' });
+
+    res.json(laudo);
+  } catch (error) {
+    console.error('Erro no upload:', error);
+    res.status(500).json({ message: 'Erro ao fazer upload do arquivo.' });
+  }
+});
+
+// DELETE /laudos/arquivo/:id
+router.delete('/arquivo/:id', async (req, res) => {
+  try {
+    const { publicId, laudoId } = req.body;
+
+    await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
+
+    await Laudo.findByIdAndUpdate(laudoId, {
+      $pull: { arquivos: { publicId } }
+    });
+
+    res.json({ message: 'Arquivo removido com sucesso.' });
+  } catch {
+    res.status(500).json({ message: 'Erro ao remover arquivo.' });
   }
 });
 

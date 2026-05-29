@@ -23,6 +23,12 @@ const LaudoSchema = new mongoose.Schema({
     default: 'Pendente Análise',
   },
 
+intercorrencia: {
+  type: String,
+  enum: ['Nenhuma', 'Recoleta Necessária'],
+  default: 'Nenhuma',
+},
+
   pontoId:         { type: String, default: null },
   loteOperacional: { type: String, default: '' },
 
@@ -37,6 +43,16 @@ const LaudoSchema = new mongoose.Schema({
   ufcFungos:          { type: Number, default: null },
   responsavelLeitura: { type: String, default: '' },
   dataAnalise:        { type: Date,   default: null },
+  dataColeta:         { type: Date,   required: true },
+  dataPrazo:          { type: Date,   default: null },
+  arquivos: [
+    {
+      url:          { type: String, required: true },
+      publicId:     { type: String, required: true },
+      nomeOriginal: { type: String, default: '' },
+      dataUpload:   { type: Date,   default: Date.now },
+    }
+  ],
 
 }, { timestamps: true });
 
