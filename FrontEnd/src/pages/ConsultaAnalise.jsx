@@ -6,7 +6,6 @@ import {
   obterBadgeTipo,
   obterGrau,
   obterNomePonto,
-  NOME_PONTO,
 } from '../utils/laudoHelpers';
 import UploadLaudo from '../components/shared/UploadLaudo';
 
@@ -226,7 +225,6 @@ export default function ConsultaAnalise() {
         const sala     = obterNomeSala(laudo.pontoId);
         const estiloSala = obterEstiloSala(sala);
         const limite   = obterLimiteReferencia(laudo.pontoId);
-        const nomePonto = NOME_PONTO[laudo.pontoId] || laudo.pontoId || laudo.colaboradorId || '—';
 
         return (
           <div
