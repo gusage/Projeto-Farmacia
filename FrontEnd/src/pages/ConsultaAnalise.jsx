@@ -13,7 +13,7 @@ export default function ConsultaAnalise() {
   const [laudos,     setLaudos]     = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro,       setErro]       = useState('');
-  const [cardAberto, setCardAberto] = useState(null); // 🆕 controla qual card está expandido
+  const [cardAberto, setCardAberto] = useState(null);
 
   const [filtroTipo,        setFiltroTipo]        = useState('Todos');
   const [filtroStatus,      setFiltroStatus]      = useState('Todos');
@@ -34,20 +34,18 @@ export default function ConsultaAnalise() {
     buscarHistorico();
   }, []);
 
-  const handleAtualizarLaudo = (laudoAtualizado) => {
-    setLaudos(prev =>
-      prev.map(l => l._id === laudoAtualizado._id ? laudoAtualizado : l)
-    );
-  };
+  const handleAtualizarLaudo = (laudoAtualizado) =>
+    setLaudos(prev => prev.map(l => l._id === laudoAtualizado._id ? laudoAtualizado : l));
 
   const toggleCard = (id) =>
     setCardAberto(prev => prev === id ? null : id);
 
   const laudosFiltrados = laudos.filter(laudo => {
     if (filtroTipo !== 'Todos' && laudo.tipoColeta !== filtroTipo) return false;
-    if (filtroStatus === 'Recebidos' && laudo.status === 'Pendente Análise') return false;
-    if (filtroStatus === 'Pendentes' && laudo.status !== 'Pendente Análise') return false;
-    if (filtroStatus === 'Recoleta'  && laudo.status !== 'Recoleta') return false;
+    if (filtroStatus === 'Recebidos'      && laudo.status === 'Pendente Análise') return false;
+    if (filtroStatus === 'Pendentes'      && laudo.status !== 'Pendente Análise') return false;
+    if (filtroStatus === 'Recoleta'       && laudo.status !== 'Recoleta')         return false;
+    if (filtroStatus === 'Intercorrência' && (!laudo.intercorrencia || laudo.intercorrencia === 'Nenhuma')) return false;
 
     if (filtroMesAno) {
       const [ano, mes] = filtroMesAno.split('-');
@@ -66,17 +64,14 @@ export default function ConsultaAnalise() {
   const totalFiltrados = laudosFiltrados.length;
   const totalRecebidos = laudosFiltrados.filter(l => l.status !== 'Pendente Análise').length;
   const totalPendentes = laudosFiltrados.filter(l => l.status === 'Pendente Análise').length;
-  const totalRecoleta  = laudosFiltrados.filter(l => l.status === 'Recoleta').length;
+  const totalIntercorr = laudosFiltrados.filter(l => l.intercorrencia && l.intercorrencia !== 'Nenhuma').length;
 
   const selectClass = 'w-full bg-[#0d1117] border border-slate-700 rounded p-1.5 text-xs text-slate-300 outline-none focus:border-emerald-500';
 
   function BadgeStatus({ status }) {
-    if (status === 'Recoleta')
-      return <span className="text-amber-400 font-black uppercase tracking-wider text-[10px]">🔄 Recoleta</span>;
-    if (status === 'Pendente Análise')
-      return <span className="text-amber-500 font-black uppercase tracking-wider text-[10px]">⏳ Pendente</span>;
-    if (status === 'Inconforme')
-      return <span className="text-rose-400 font-black uppercase tracking-wider text-[10px]">❌ Inconforme</span>;
+    if (status === 'Recoleta')         return <span className="text-amber-400 font-black uppercase tracking-wider text-[10px]">🔄 Recoleta</span>;
+    if (status === 'Pendente Análise') return <span className="text-amber-500 font-black uppercase tracking-wider text-[10px]">⏳ Pendente</span>;
+    if (status === 'Inconforme')       return <span className="text-rose-400 font-black uppercase tracking-wider text-[10px]">❌ Inconforme</span>;
     return <span className="text-emerald-400 font-black uppercase tracking-wider text-[10px]">✅ Conforme</span>;
   }
 
@@ -122,6 +117,7 @@ export default function ConsultaAnalise() {
               <option value="Recebidos">Laudos Recebidos</option>
               <option value="Pendentes">Pendentes</option>
               <option value="Recoleta">Recoleta</option>
+              <option value="Intercorrência">Com Intercorrência</option>
             </select>
           </div>
           <div>
@@ -147,7 +143,7 @@ export default function ConsultaAnalise() {
           { icon: '📋', valor: totalFiltrados, label: 'Registros',        cor: 'text-blue-400'    },
           { icon: '✅', valor: totalRecebidos, label: 'Laudos Recebidos', cor: 'text-emerald-400' },
           { icon: '⏳', valor: totalPendentes, label: 'Pendentes',        cor: 'text-amber-500'   },
-          { icon: '🔄', valor: totalRecoleta,  label: 'Recoleta',         cor: 'text-amber-400'   },
+          { icon: '⚠️', valor: totalIntercorr, label: 'Intercorrência',   cor: 'text-orange-400'  },
         ].map(({ icon, valor, label, cor }) => (
           <div key={label} className="bg-[#161b22] border border-slate-800 p-4 rounded-lg text-center space-y-1">
             <span className="text-xl">{icon}</span>
@@ -157,7 +153,6 @@ export default function ConsultaAnalise() {
         ))}
       </div>
 
-      {/* Listagem */}
       {carregando && (
         <div className="text-xs text-slate-500 animate-pulse text-center py-10">
           Sincronizando registros ativos...
@@ -170,24 +165,21 @@ export default function ConsultaAnalise() {
         </div>
       )}
 
+      {/* Listagem */}
       {!carregando && laudosFiltrados.map((laudo) => {
-        const badge    = obterBadgeTipo(laudo.tipoColeta);
-        const grau     = obterGrau(laudo.pontoId);
-        const prazo    = laudo.dataPrazo
-          ? new Date(laudo.dataPrazo).toLocaleDateString('pt-BR') : '—';
-        const aberto   = cardAberto === laudo._id;
+        const badge  = obterBadgeTipo(laudo.tipoColeta);
+        const grau   = obterGrau(laudo.pontoId);
+        const prazo  = laudo.dataPrazo ? new Date(laudo.dataPrazo).toLocaleDateString('pt-BR') : '—';
+        const aberto = cardAberto === laudo._id;
 
         return (
-          <div
-            key={laudo._id}
-            className={`bg-[#161b22]/40 border ${corBorda(laudo.status)} rounded-lg transition-colors`}
-          >
-            {/* Linha principal — clicável para expandir */}
+          <div key={laudo._id} className={`bg-[#161b22]/40 border ${corBorda(laudo.status)} rounded-lg transition-colors`}>
+
+            {/* Linha principal */}
             <div
               className="p-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 cursor-pointer"
               onClick={() => toggleCard(laudo._id)}
             >
-              {/* Esquerda */}
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={`${badge.estilo} border px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-tight`}>
@@ -206,47 +198,46 @@ export default function ConsultaAnalise() {
                   {obterNomePonto(laudo)}
                 </h3>
                 {laudo.intercorrencia && laudo.intercorrencia !== 'Nenhuma' && (
-                  <span className="text-[9px] text-amber-400 font-bold uppercase tracking-wide">
+                  <span className="text-[9px] text-orange-400 font-bold uppercase tracking-wide">
                     ⚠️ {laudo.intercorrencia}
                   </span>
                 )}
               </div>
 
-              {/* Direita */}
               <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto text-[10px] border-t md:border-none border-slate-800/40 pt-2 md:pt-0">
                 <BadgeStatus status={laudo.status} />
                 <div className="text-right text-slate-500">
                   Prazo: <span className="text-slate-400 font-medium">{prazo}</span>
                 </div>
-                {/* Indicador de expand */}
-                <span className="text-slate-600 text-xs">
-                  {aberto ? '▲' : '▼'}
-                </span>
+                <span className="text-slate-600 text-xs">{aberto ? '▲' : '▼'}</span>
               </div>
             </div>
 
-            {/* Painel expandido — arquivos */}
+            {/* Painel expandido */}
             {aberto && (
               <div className="px-3 pb-4 border-t border-slate-800/40">
                 <div className="pt-3 space-y-3">
-
-                  {/* Detalhes do laudo */}
-                  {laudo.numeroLaudo && (
-                    <div className="flex flex-wrap gap-4 text-[10px] text-slate-500">
+                  <div className="flex flex-wrap gap-4 text-[10px] text-slate-500">
+                    {laudo.numeroLaudo && (
                       <span>Nº Laudo: <b className="text-slate-300">{laudo.numeroLaudo}</b></span>
-                      {laudo.ufcBacterias !== null && (
-                        <span>UFC Bact.: <b className="text-slate-300">{laudo.ufcBacterias}</b></span>
-                      )}
-                      {laudo.ufcFungos !== null && (
-                        <span>UFC Fung.: <b className="text-slate-300">{laudo.ufcFungos}</b></span>
-                      )}
-                      {laudo.responsavelLeitura && (
-                        <span>Responsável: <b className="text-slate-300">{laudo.responsavelLeitura}</b></span>
-                      )}
-                    </div>
-                  )}
+                    )}
+                    {laudo.ufcBacterias !== null && laudo.ufcBacterias !== undefined && (
+                      <span>UFC Bact.: <b className="text-slate-300">{laudo.ufcBacterias}</b></span>
+                    )}
+                    {laudo.ufcFungos !== null && laudo.ufcFungos !== undefined && (
+                      <span>UFC Fung.: <b className="text-slate-300">{laudo.ufcFungos}</b></span>
+                    )}
+                    {laudo.responsavelLeitura && (
+                      <span>Responsável: <b className="text-slate-300">{laudo.responsavelLeitura}</b></span>
+                    )}
+                    {laudo.dataAnalise && (
+                      <span>Analisado em: <b className="text-slate-300">{new Date(laudo.dataAnalise).toLocaleDateString('pt-BR')}</b></span>
+                    )}
+                    {laudo.intercorrencia && laudo.intercorrencia !== 'Nenhuma' && (
+                      <span>Intercorrência: <b className="text-orange-400">{laudo.intercorrencia}</b></span>
+                    )}
+                  </div>
 
-                  {/* Upload de arquivos */}
                   <UploadLaudo
                     laudoId={laudo._id}
                     arquivos={laudo.arquivos || []}

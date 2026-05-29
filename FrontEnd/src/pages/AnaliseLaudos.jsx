@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { calcularDiasRestantes } from '../utils/laudoHelpers';
+import { calcularDiasRestantes, TIPOS_COLETA } from '../utils/laudoHelpers';
 import UploadLaudo from '../components/shared/UploadLaudo';
 
 function BadgePrazo({ dias }) {
@@ -18,12 +18,26 @@ function inputClass(focusColor = 'blue') {
   return `w-full bg-[#0d1117] border border-slate-700 rounded p-2 text-[11px] outline-none focus:border-${focusColor}-500 transition-colors`;
 }
 
+const INTERCORRENCIAS = [
+  'Nenhuma',
+  'Recoleta Necessária',
+  'Amostra Contaminada',
+  'Problema no Transporte',
+  'Erro de Identificação',
+  'Amostra Insuficiente',
+];
+
 export default function AnaliseLaudos() {
   const { user } = useAuth();
   const [laudos,     setLaudos]     = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [mensagem,   setMensagem]   = useState({ tipo: '', texto: '' });
   const [inputs,     setInputs]     = useState({});
+
+  // Filtros
+  const [filtroTipo,   setFiltroTipo]   = useState('Todos');
+  const [filtroTurno,  setFiltroTurno]  = useState('Todos');
+  const [filtroMesAno, setFiltroMesAno] = useState('');
 
   useEffect(() => {
     async function buscarPendentes() {
@@ -55,12 +69,8 @@ export default function AnaliseLaudos() {
   const handleInputChange = (id, campo, valor) =>
     setInputs(prev => ({ ...prev, [id]: { ...prev[id], [campo]: valor } }));
 
-  // Atualiza um laudo específico na lista (usado pelo UploadLaudo)
-  const handleAtualizarLaudo = (laudoAtualizado) => {
-    setLaudos(prev =>
-      prev.map(l => l._id === laudoAtualizado._id ? laudoAtualizado : l)
-    );
-  };
+  const handleAtualizarLaudo = (laudoAtualizado) =>
+    setLaudos(prev => prev.map(l => l._id === laudoAtualizado._id ? laudoAtualizado : l));
 
   const confirmarRecebimento = async (id) => {
     const dados = inputs[id];
@@ -68,7 +78,7 @@ export default function AnaliseLaudos() {
 
     try {
       await api.put(`/laudos/atualizar/${id}`, {
-        status:             dados.resultadoFinal === 'Aprovado' ? 'Conforme'
+        status:             dados.resultadoFinal === 'Aprovado'         ? 'Conforme'
                           : dados.intercorrencia === 'Recoleta Necessária' ? 'Recoleta'
                           : 'Inconforme',
         numeroLaudo:        dados.numeroLaudo,
@@ -86,6 +96,21 @@ export default function AnaliseLaudos() {
     }
   };
 
+  // Filtros aplicados
+  const laudosFiltrados = laudos.filter(l => {
+    if (filtroTipo  !== 'Todos' && l.tipoColeta !== filtroTipo)  return false;
+    if (filtroTurno !== 'Todos' && l.turno      !== filtroTurno) return false;
+    if (filtroMesAno) {
+      const [ano, mes] = filtroMesAno.split('-');
+      const d = new Date(l.dataColeta);
+      if (d.getFullYear().toString() !== ano) return false;
+      if ((d.getMonth() + 1).toString().padStart(2, '0') !== mes) return false;
+    }
+    return true;
+  });
+
+  const selectClass = 'w-full bg-[#0d1117] border border-slate-700 rounded p-1.5 text-xs text-slate-300 outline-none focus:border-emerald-500';
+
   return (
     <div className="space-y-6">
 
@@ -95,7 +120,7 @@ export default function AnaliseLaudos() {
           <h1 className="text-xl font-bold flex items-center gap-2 text-slate-200">
             📋 Aguardando Laudo
             <span className="bg-blue-900 text-blue-300 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-tighter">
-              {laudos.length} pendentes
+              {laudosFiltrados.length} pendentes
             </span>
           </h1>
           <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">
@@ -115,18 +140,45 @@ export default function AnaliseLaudos() {
         </div>
       )}
 
+      {/* Filtros */}
+      <div className="border border-slate-800 bg-[#161b22] p-4 rounded-lg space-y-3">
+        <h2 className="text-[10px] font-black text-emerald-500 tracking-widest uppercase">Filtros</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-[9px] text-slate-500 uppercase font-bold mb-1">Tipo de Coleta</label>
+            <select className={selectClass} value={filtroTipo} onChange={e => setFiltroTipo(e.target.value)}>
+              <option value="Todos">Todos</option>
+              {TIPOS_COLETA.map(t => <option key={t}>{t}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-[9px] text-slate-500 uppercase font-bold mb-1">Turno</label>
+            <select className={selectClass} value={filtroTurno} onChange={e => setFiltroTurno(e.target.value)}>
+              <option value="Todos">Todos</option>
+              <option>Manhã</option>
+              <option>Tarde</option>
+              <option>Noite</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-[9px] text-slate-500 uppercase font-bold mb-1">Mês / Ano</label>
+            <input type="month" className={selectClass} value={filtroMesAno} onChange={e => setFiltroMesAno(e.target.value)} />
+          </div>
+        </div>
+      </div>
+
       {carregando && (
         <div className="text-slate-500 text-xs animate-pulse">Sincronizando com Atlas...</div>
       )}
 
-      {!carregando && laudos.length === 0 && !mensagem.texto && (
+      {!carregando && laudosFiltrados.length === 0 && !mensagem.texto && (
         <div className="py-20 text-center border border-dashed border-slate-800 rounded-xl text-slate-600 text-sm">
           Nenhum laudo aguardando leitura no momento. ✨
         </div>
       )}
 
       {/* Cards */}
-      {!carregando && laudos.map((laudo) => {
+      {!carregando && laudosFiltrados.map((laudo) => {
         const dias  = calcularDiasRestantes(laudo.dataPrazo);
         const input = inputs[laudo._id] || {};
 
@@ -160,12 +212,9 @@ export default function AnaliseLaudos() {
               </h2>
               <div className="flex flex-wrap gap-4 mt-1 text-[10px] text-slate-500 uppercase font-medium">
                 <span>Coleta: <b className="text-slate-400">{new Date(laudo.dataColeta).toLocaleDateString('pt-BR')}</b></span>
-                <span>Prazo: <b className="text-slate-400">
-                  {laudo.dataPrazo ? new Date(laudo.dataPrazo).toLocaleDateString('pt-BR') : '—'}
-                </b></span>
-                <span>Lote: <b className="text-slate-400">
-                  {laudo.loteBact || laudo.loteOperacional || '—'}
-                </b></span>
+                <span>Prazo: <b className="text-slate-400">{laudo.dataPrazo ? new Date(laudo.dataPrazo).toLocaleDateString('pt-BR') : '—'}</b></span>
+                <span>Turno: <b className="text-slate-400">{laudo.turno}</b></span>
+                <span>Lote: <b className="text-slate-400">{laudo.loteBact || laudo.loteOperacional || '—'}</b></span>
               </div>
             </div>
 
@@ -217,15 +266,15 @@ export default function AnaliseLaudos() {
                 />
               </div>
 
+              {/* Intercorrência com amostra */}
               <div className="space-y-1">
-                <label className="text-[9px] text-slate-500 uppercase font-bold">Intercorrência</label>
+                <label className="text-[9px] text-slate-500 uppercase font-bold">Intercorrência c/ Amostra</label>
                 <select
                   className={`${inputClass()} text-amber-400 font-bold`}
                   value={input.intercorrencia || 'Nenhuma'}
                   onChange={e => handleInputChange(laudo._id, 'intercorrencia', e.target.value)}
                 >
-                  <option value="Nenhuma">Nenhuma</option>
-                  <option value="Recoleta Necessária">Recoleta Necessária</option>
+                  {INTERCORRENCIAS.map(i => <option key={i}>{i}</option>)}
                 </select>
               </div>
 
@@ -237,7 +286,7 @@ export default function AnaliseLaudos() {
               </button>
             </div>
 
-            {/* Footer — responsável + upload */}
+            {/* Footer */}
             <div className="mt-4 space-y-4">
               <div className="flex flex-col gap-1">
                 <label className="text-[9px] text-slate-600 uppercase font-bold">Responsável pela Leitura</label>
@@ -249,8 +298,6 @@ export default function AnaliseLaudos() {
                   onChange={e => handleInputChange(laudo._id, 'responsavelLeitura', e.target.value)}
                 />
               </div>
-
-              {/* 🆕 Upload de arquivos */}
               <UploadLaudo
                 laudoId={laudo._id}
                 arquivos={laudo.arquivos || []}
