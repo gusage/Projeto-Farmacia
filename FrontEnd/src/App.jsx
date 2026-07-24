@@ -10,11 +10,12 @@ import ConsultaAnalise from './pages/ConsultaAnalise';
 import AnaliseTendencia from './pages/AnaliseTendencia';
 import GerenciarColaboradores from './pages/GerenciarColaboradores';
 import CadastroUsuario from './pages/CadastroUsuario';
+import Landing from './pages/Landing';
 
-// Protege rotas — redireciona pro login se não autenticado
+// Protege rotas — redireciona pro Landing se não autenticado
 function RotaProtegida({ children }) {
   const { user } = useAuth();
-  return user ? children : <Navigate to="/login" replace />;
+  return user ? children : <Navigate to="/landing" replace />;
 }
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* Rota pública */}
+        <Route path="/landing" element={<Landing />} />
         <Route path="/login" element={<Login />} />
 
         {/* Rotas protegidas dentro do layout */}

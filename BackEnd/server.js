@@ -8,6 +8,7 @@ const dns        = require('node:dns');
 const authRoutes         = require('./routes/auth');
 const laudoRoutes        = require('./routes/laudoRoute');
 const colaboradorRoutes  = require('./routes/colaboradorRoute');
+const contatoRoutes      = require('./routes/contatoRoutes');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -38,7 +39,8 @@ connectDB();
 // Rotas
 app.use('/api/auth',          authRoutes);
 app.use('/api/laudos',        laudoRoutes);
-app.use('/api/colaboradores', colaboradorRoutes); // 🆕
+app.use('/api/colaboradores', colaboradorRoutes); 
+app.use('/api/contato',       contatoRoutes);     // 🆕
 
 // Tratamento global de erros — captura qualquer erro não tratado nas rotas
 app.use((err, req, res, next) => {
