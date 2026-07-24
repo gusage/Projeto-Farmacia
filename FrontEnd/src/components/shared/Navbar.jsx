@@ -47,7 +47,7 @@ export default function Navbar() {
           </div>
           <div>
             <span className="text-[9px] font-black tracking-widest text-emerald-500 block uppercase">
-              ATLAS PHARMA S.A. · MES SYSTEM
+              MES SYSTEM
             </span>
             <span className="text-sm font-black tracking-wider text-slate-200 uppercase">
               BioCount

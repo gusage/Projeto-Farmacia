@@ -34,9 +34,6 @@ export default function Login() {
 
         {/* CABEÇALHO */}
         <div className="text-center space-y-1 border-b border-slate-800 pb-4">
-          <p className="text-[9px] font-black tracking-widest text-emerald-500 uppercase">
-            ATLAS PHARMA S.A. - MES SYSTEM
-          </p>
           <h1 className="text-xl font-black tracking-wider text-slate-200 uppercase">
             Sistema de Monitoramento Ambiental
           </h1>
